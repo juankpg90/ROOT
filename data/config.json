@@ -1,0 +1,12 @@
+{
+  "tasa_efectiva_cop_usd": 3250,
+  "capital_inicial_cop": 182500,
+  "roi_minimo": 0.30,
+  "max_compra_usd": 200,
+  "canales": {
+    "marketplace": {"comision": 0.0, "nota": "Facebook Marketplace, entrega local Bogotá"},
+    "whatsapp": {"comision": 0.0, "nota": "Grupos / contactos directos"},
+    "mercadolibre": {"comision": 0.19, "nota": "Cargadores con hasta 3 cuotas 0%. Verificar por categoría."},
+    "mercadolibre_financiado": {"comision": 0.22, "nota": "Otra financiación. Verificar por categoría."}
+  }
+}
