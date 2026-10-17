@@ -4,7 +4,7 @@ import unittest
 from datetime import date
 from pathlib import Path
 
-from arbitraje import calc, tracker, vigilancia
+from arbitraje import calc, ofertas, tracker, vigilancia
 from arbitraje.cli import main
 
 DATA = Path(__file__).resolve().parent.parent / "data"
@@ -98,10 +98,40 @@ class TestVigilancia(unittest.TestCase):
         self.assertEqual(vigilancia.extraer_precio('{"priceAmount":64.99}'), 64.99)
         self.assertIsNone(vigilancia.extraer_precio("<html></html>"))
 
+    def test_extraer_precio_prefiere_ficha_principal(self):
+        pagina = ('<span class="a-offscreen">$9.99</span>'
+                  '<div id="corePriceDisplay_desktop_feature_div"><span class="a-offscreen">$49.49</span></div>')
+        self.assertEqual(vigilancia.extraer_precio(pagina), 49.49)
+
+    def test_extraer_vendedor(self):
+        pagina = '<a id="sellerProfileTriggerId" href="#">General King</a>'
+        self.assertEqual(vigilancia.extraer_vendedor(pagina), "General King")
+        self.assertIsNone(vigilancia.extraer_vendedor("<html></html>"))
+
     def test_codigo_salida_con_alerta(self):
         d = str(self.dir)
         main(["--data", d, "precio", "airtag4", "64.99"])
         self.assertEqual(main(["--data", d, "vigilar", "--codigo-salida"]), 1)
+
+
+RESULTADO = (
+    '<div data-asin="B000TEST01" data-index="1" data-component-type="s-search-result">'
+    '<h2><span>JBL Go 5 {t}</span></h2><span>4.6 out of 5 stars</span>'
+    '<a aria-label="1,157 ratings"></a>'
+    '<span class="a-price" data-a-size="xl"><span class="a-offscreen">${p}</span></span>'
+    '<span class="a-price a-text-price" data-a-strike="true"><span class="a-offscreen">$54.95</span></span></div>')
+
+
+class TestOfertas(unittest.TestCase):
+    def test_parsear_y_filtrar(self):
+        pagina = RESULTADO.format(t="", p="39.95") + RESULTADO.replace("B000TEST01", "B000TEST02").format(
+            t="(Renewed)", p="29.95")
+        productos = ofertas.parsear_resultados(pagina)
+        self.assertEqual([p["asin"] for p in productos], ["B000TEST01", "B000TEST02"])
+        self.assertEqual(productos[0]["descuento"], 27)
+        self.assertEqual(productos[0]["resenas"], 1157)
+        self.assertEqual([p["asin"] for p in ofertas.filtrar(productos, max_usd=86)], ["B000TEST01"])
+        self.assertEqual(ofertas.filtrar(productos, max_usd=30), [])
 
 
 if __name__ == "__main__":

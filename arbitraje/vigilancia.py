@@ -6,6 +6,7 @@ Amazon cambia su HTML y puede bloquear la consulta, y el precio de la página no
 incluye envío ni cargos de importación. Ninguna alerta reemplaza revisar el checkout.
 """
 import csv
+import html
 import re
 import urllib.request
 from datetime import date
@@ -57,30 +58,48 @@ def registrar_precio(items, id_, precio_usd, fuente="manual", hoy=None, data_dir
     raise ValueError(f"No existe '{id_}' en la lista de vigilancia")
 
 
+_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
+
 _PATRONES_PRECIO = [
+    # Precio principal de la ficha (el primer a-offscreen de la página suele ser de otro producto).
+    r'id="corePrice(?:Display_desktop)?_feature_div".*?<span class="a-offscreen">\$([0-9][0-9,]*\.[0-9]{2})',
     r'"priceAmount"\s*:\s*([0-9]+(?:\.[0-9]{1,2})?)',
     r'<span class="a-offscreen">\s*\$([0-9][0-9,]*\.[0-9]{2})\s*</span>',
 ]
 
 
-def extraer_precio(html):
+def extraer_precio(pagina):
     for patron in _PATRONES_PRECIO:
-        m = re.search(patron, html)
+        m = re.search(patron, pagina, re.S)
         if m:
             return float(m.group(1).replace(",", ""))
     return None
 
 
-def consultar_precio(url, timeout=20):
-    """Intenta leer el precio de una página de producto. Devuelve None si no lo logra."""
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/126.0 Safari/537.36",
-        "Accept-Language": "en-US,en;q=0.9",
-    })
+def extraer_vendedor(pagina):
+    """Nombre del vendedor ("Sold by") de la oferta principal, o None."""
+    for patron in (r'id="sellerProfileTriggerId"[^>]*>\s*([^<]+?)\s*<',
+                   r'merchant-info.*?offer-display-feature-text-message">\s*([^<]+?)\s*<'):
+        m = re.search(patron, pagina, re.S)
+        if m:
+            return html.unescape(m.group(1))
+    return None
+
+
+def descargar(url, timeout=30):
+    """Descarga una página de Amazon. Devuelve None si falla."""
+    req = urllib.request.Request(url, headers={"User-Agent": _UA, "Accept-Language": "en-US,en;q=0.9"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            html = resp.read().decode("utf-8", errors="replace")
+            return resp.read().decode("utf-8", errors="replace")
     except OSError:
         return None
-    return extraer_precio(html)
+
+
+def consultar(url):
+    """(precio, vendedor) de una ficha de producto; (None, None) si no se pudo leer."""
+    pagina = descargar(url)
+    if pagina is None:
+        return None, None
+    return extraer_precio(pagina), extraer_vendedor(pagina)

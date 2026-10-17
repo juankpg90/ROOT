@@ -2,7 +2,7 @@
 import argparse
 from datetime import date
 
-from arbitraje import calc, tracker, vigilancia
+from arbitraje import calc, ofertas, tracker, vigilancia
 from arbitraje.config import DATA_DIR, cargar, comision_canal
 
 
@@ -138,25 +138,46 @@ def cmd_vender(args, cfg):
 
 def cmd_vigilar(args, cfg):
     items = vigilancia.leer(args.data)
+    vendedores = {}
     if args.consultar:
         for item in items:
-            if item["url"]:
-                precio = vigilancia.consultar_precio(item["url"])
-                if precio is None:
-                    print(f"· {item['id']}: no se pudo leer el precio de la página")
-                else:
-                    vigilancia.registrar_precio(items, item["id"], precio, "web-no-verificado", data_dir=args.data)
+            if "/dp/" not in item["url"]:
+                continue
+            precio, vendedor = vigilancia.consultar(item["url"])
+            if precio is None:
+                print(f"· {item['id']}: no se pudo leer el precio de la página")
+                continue
+            vendedores[item["id"]] = vendedor
+            vigilancia.registrar_precio(items, item["id"], precio, "web-no-verificado", data_dir=args.data)
         vigilancia.guardar(items, args.data)
     alertas = 0
     for item in items:
         est = vigilancia.estado(item)
         precio = f"USD {item['ultimo_precio_usd']} ({item['fecha_precio']}, {item['fuente']})" \
             if item["ultimo_precio_usd"] else "sin precio registrado"
-        print(f"[{est:^10}] {item['id']:<10} {item['producto']} — umbral ≤ USD {item['umbral_usd']} — {precio}")
+        vende = f" — vende: {vendedores[item['id']]}" if vendedores.get(item["id"]) else ""
+        print(f"[{est:^10}] {item['id']:<10} {item['producto']} — umbral ≤ USD {item['umbral_usd']} — {precio}{vende}")
         if est == "COMPRAR":
             alertas += 1
+            print(f"             → {item['url']}")
             print(f"             → Verificar checkout: envío e importación USD 0. {item['notas']}")
     return 1 if args.codigo_salida and alertas else 0
+
+
+def cmd_ofertas(args, cfg):
+    tasa = cfg["tasa_efectiva_cop_usd"]
+    capital = tracker.capital(tracker.leer(args.data), cfg["capital_inicial_cop"])["disponible"]
+    max_usd = args.max_usd or capital / tasa
+    consultas = args.consultas or cfg["consultas_ofertas"]
+    candidatos = ofertas.filtrar(ofertas.buscar(consultas), max_usd, min_descuento=args.min_descuento)
+    print(f"{len(candidatos)} candidatos ≤ USD {max_usd:.0f} con ≥ {args.min_descuento}% de descuento "
+          f"(precios vistos desde EE. UU.; confirmar envío a Colombia y vendedor)")
+    for p in candidatos:
+        print(f"{p['descuento']:>3}%  USD {p['precio']:>7.2f} (lista {p['lista']:.2f})  "
+              f"costo {cop(p['precio'] * tasa)}  {p['estrellas']}★ {p['resenas']:,} reseñas")
+        print(f"      {p['titulo'][:90]}")
+        print(f"      https://www.amazon.com/dp/{p['asin']}")
+    return 0
 
 
 def cmd_precio(args, cfg):
@@ -234,6 +255,12 @@ def construir_parser():
                    help="Intenta leer precios de las páginas (no verificado; puede fallar)")
     s.add_argument("--codigo-salida", action="store_true", help="Sale con 1 si hay alguna alerta")
     s.set_defaults(func=cmd_vigilar)
+
+    s = sub.add_parser("ofertas", help="Busca productos con descuento en Amazon")
+    s.add_argument("consultas", nargs="*", help="Búsquedas (por defecto consultas_ofertas de config.json)")
+    s.add_argument("--max-usd", type=float, help="Precio máximo (por defecto, el capital disponible)")
+    s.add_argument("--min-descuento", type=int, default=20)
+    s.set_defaults(func=cmd_ofertas)
 
     s = sub.add_parser("precio", help="Registra un precio observado para un producto vigilado")
     s.add_argument("id")

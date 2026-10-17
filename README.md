@@ -70,7 +70,8 @@ Estados: `COMPRAR` (precio ≤ umbral), `VIGILAR`, `DESCARTAR` (precio > límite
 descarte) y `SIN PRECIO`. Umbrales iniciales: AirTag x4 ≤ USD 70, UGREEN 160W ≤ USD 62
 (descartar > 70), MX Master 3S ≤ USD 80. Se agregan o cambian editando `vigilancia.csv`.
 
-`--consultar` es un intento de leer la página de Amazon: puede fallar (Amazon bloquea
+`--consultar` lee las fichas con enlace `/dp/` y muestra también el vendedor ("Sold by").
+Es un intento de leer la página de Amazon: puede fallar (Amazon bloquea
 o cambia su HTML) y el precio de la página **no incluye envío ni importación**. Por
 eso esos precios se guardan con fuente `web-no-verificado`. La decisión de compra
 siempre se confirma en el checkout.
@@ -80,6 +81,18 @@ Ejemplo de alerta diaria con cron (en tu equipo):
 ```
 0 9 * * * cd ~/ROOT && python3 -m arbitraje vigilar --consultar --codigo-salida || notify-send "Arbitraje" "Hay un producto bajo el umbral"
 ```
+
+## 4. Buscador de ofertas
+
+```
+python -m arbitraje ofertas                       # usa consultas_ofertas de config.json
+python -m arbitraje ofertas "JBL speaker" "Xbox controller" --min-descuento 25
+```
+
+Recorre búsquedas de Amazon y lista productos con descuento ≥ 20% (por defecto), con
+500+ reseñas, sin reacondicionados y con precio dentro del capital disponible. Los
+precios son los que ve un visitante de EE. UU.: confirmar envío a Colombia, vendedor y
+precio de venta en Colombia antes de comprar.
 
 ## Tests
 
