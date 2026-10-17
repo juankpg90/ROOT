@@ -25,7 +25,7 @@ def leer(data_dir=DATA_DIR):
 
 def guardar(ciclos, data_dir=DATA_DIR):
     with open(ruta(data_dir), "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=CAMPOS)
+        w = csv.DictWriter(f, fieldnames=CAMPOS, lineterminator="\n")
         w.writeheader()
         for c in ciclos:
             w.writerow({k: c.get(k, "") for k in CAMPOS})

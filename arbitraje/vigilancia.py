@@ -28,7 +28,7 @@ def leer(data_dir=DATA_DIR):
 
 def guardar(items, data_dir=DATA_DIR):
     with open(_ruta(data_dir, "vigilancia.csv"), "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=CAMPOS)
+        w = csv.DictWriter(f, fieldnames=CAMPOS, lineterminator="\n")
         w.writeheader()
         for i in items:
             w.writerow({k: i.get(k, "") for k in CAMPOS})
@@ -52,7 +52,7 @@ def registrar_precio(items, id_, precio_usd, fuente="manual", hoy=None, data_dir
         if item["id"] == id_:
             item.update(ultimo_precio_usd=f"{precio_usd:.2f}", fecha_precio=hoy, fuente=fuente)
             with open(_ruta(data_dir, "historial_precios.csv"), "a", newline="", encoding="utf-8") as f:
-                csv.writer(f).writerow([hoy, id_, f"{precio_usd:.2f}", fuente])
+                csv.writer(f, lineterminator="\n").writerow([hoy, id_, f"{precio_usd:.2f}", fuente])
             return item
     raise ValueError(f"No existe '{id_}' en la lista de vigilancia")
 
