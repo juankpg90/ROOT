@@ -83,14 +83,15 @@ class TestVigilancia(unittest.TestCase):
 
     def test_estados(self):
         items = vigilancia.leer(self.dir)
+        historial = self.dir / "historial_precios.csv"
+        antes = len(historial.read_text().splitlines())
         ugreen = vigilancia.registrar_precio(items, "ugreen160", 61.5, data_dir=self.dir)
         self.assertEqual(vigilancia.estado(ugreen), "COMPRAR")
         vigilancia.registrar_precio(items, "ugreen160", 65, data_dir=self.dir)
         self.assertEqual(vigilancia.estado(ugreen), "VIGILAR")
         vigilancia.registrar_precio(items, "ugreen160", 71, data_dir=self.dir)
         self.assertEqual(vigilancia.estado(ugreen), "DESCARTAR")
-        historial = (self.dir / "historial_precios.csv").read_text().splitlines()
-        self.assertEqual(len(historial), 4)
+        self.assertEqual(len(historial.read_text().splitlines()), antes + 3)
 
     def test_extraer_precio(self):
         self.assertEqual(vigilancia.extraer_precio('<span class="a-offscreen">$1,064.99</span>'), 1064.99)
