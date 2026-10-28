@@ -26,13 +26,11 @@ Registrado en `data/ciclos.csv` como ciclos 2, 3 y 4.
 **Descripción:**
 
 > Vaso YETI Rambler de 35 oz (aprox. 1 litro) con tapa de pitillo y asa, color negro.
-> 100% original, comprado en Amazon USA a YETI Authorized (distribuidor autorizado). Nuevo, sin uso.
+> 100% original, nuevo, sin uso.
 >
 > ✅ Acero inoxidable con aislamiento al vacío de doble pared
 > ✅ Pitillo reutilizable y asa de agarre cómodo
 > ✅ Cabe en el portavasos del carro
->
-> Ojo con las imitaciones: este es original y te muestro la factura de compra.
 >
 > 📍 Entrega en Bogotá (norte) o envío a todo el país (el envío lo paga el comprador).
 > 💵 Pago contra entrega: efectivo, Nequi o transferencia.
@@ -50,14 +48,12 @@ Registrado en `data/ciclos.csv` como ciclos 2, 3 y 4.
 **Descripción:**
 
 > Audífonos gamer HyperX Cloud Stinger 2 Core, edición PlayStation, color negro.
-> Originales, comprados en Amazon USA (vendidos por Amazon). Nuevos, en su caja.
+> Originales, nuevos, en su caja.
 >
 > 🎧 Drivers de 40 mm
 > 🎙️ Micrófono giratorio: lo subes y se silencia
 > 🪶 Livianos, cómodos para jugar horas
 > 🎮 Compatibles con PS5 y PS4 (conexión por cable)
->
-> Te muestro la factura de compra.
 >
 > 📍 Entrega en Bogotá (norte) o envío a todo el país (el envío lo paga el comprador).
 > 💵 Pago contra entrega: efectivo, Nequi o transferencia.
@@ -75,7 +71,7 @@ Registrado en `data/ciclos.csv` como ciclos 2, 3 y 4.
 **Descripción:**
 
 > Cargador UGREEN Nexode de 100 W con tecnología GaN y 4 puertos.
-> Original, comprado en Amazon USA directamente a UGREEN. Nuevo, en su caja.
+> Original, nuevo, en su caja.
 >
 > ⚡ Carga rápida para portátil, tablet y celular al mismo tiempo
 > 💻 Sirve para MacBook Pro / Air, iPad Pro, iPhone, Samsung Galaxy, Google Pixel
@@ -83,8 +79,6 @@ Registrado en `data/ciclos.csv` como ciclos 2, 3 y 4.
 >
 > 🔋 3 puertos USB-C + 1 USB-A
 > ℹ️ No incluye cable (usa el cable USB-C de tu equipo)
->
-> Te muestro la factura de compra.
 >
 > 📍 Entrega en Bogotá (norte) o envío a todo el país (el envío lo paga el comprador).
 > 💵 Pago contra entrega: efectivo, Nequi o transferencia.
@@ -101,6 +95,5 @@ Para los tres, 5 a 7 fotos con luz natural (junto a una ventana, sin flash) y fo
 4. Detalle: pitillo y tapa (YETI) · micrófono y almohadillas (Stinger) · puertos (UGREEN).
 5. En uso o con escala: YETI en la mano o junto a un vaso normal · Stinger puesta o junto a un
    control de PS5 · UGREEN conectado a un portátil o celular.
-6. Factura de Amazon, tapando los datos personales y de la tarjeta.
 
 Formato: horizontal o cuadrado, en máxima resolución del celular, sin filtros ni texto encima.
