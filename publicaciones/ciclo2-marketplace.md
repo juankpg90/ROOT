@@ -81,7 +81,8 @@ Registrado en `data/ciclos.csv` como ciclos 2, 3 y 4.
 > 💻 Sirve para MacBook Pro / Air, iPad Pro, iPhone, Samsung Galaxy, Google Pixel
 > 🔌 Enchufe plegable, compacto para viajar (clavija americana, la misma de Colombia)
 >
-> [Confirmar al abrir la caja: si incluye cable y cuáles son los puertos.]
+> 🔋 3 puertos USB-C + 1 USB-A
+> ℹ️ No incluye cable (usa el cable USB-C de tu equipo)
 >
 > Te muestro la factura de compra.
 >
